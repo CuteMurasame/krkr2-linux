@@ -372,8 +372,8 @@ tjs_uint64 TJS_INTF_METHOD tTVPPartialStream::GetSize()
 
 #ifdef HAVE_LIBARCHIVE
 extern "C" {
-#include <libarchive/archive.h>
-#include <libarchive/archive_entry.h>
+#include <archive.h>
+#include <archive_entry.h>
 }
 #endif
 #if 0
