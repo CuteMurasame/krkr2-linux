@@ -44,11 +44,13 @@ int main(int argc, char* argv[]) {
     TVPMainThreadID = std::this_thread::get_id();
     
     // Create the application delegate
-    TVPAppDelegate app;
+    // The TVPAppDelegate instance registers itself with Cocos2d-x's singleton system
+    static TVPAppDelegate app;
     
     // Run the application
     // Note: Cocos2d-x Application::run() handles the main event loop
-    int ret = cocos2d::Application::getInstance()->run();
+    // The app instance created above is accessible via Application::getInstance()
+    int ret = app.run();
     
     // Cleanup SDL
     SDL_Quit();
