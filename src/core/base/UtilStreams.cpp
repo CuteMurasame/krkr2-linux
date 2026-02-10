@@ -370,10 +370,12 @@ tjs_uint64 TJS_INTF_METHOD tTVPPartialStream::GetSize()
 
 
 
+#ifdef HAVE_LIBARCHIVE
 extern "C" {
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 }
+#endif
 #if 0
 class LibArchive_Archive : public tTVPArchive {
 	struct archive *_arc;

@@ -9,7 +9,7 @@ The build was failing with:
 ## Root Causes
 1. **Include syntax**: Used quoted includes instead of angle brackets for system headers
 2. **Missing include directories**: libarchive headers not in compiler's search path
-3. **CMake configuration**: Include directories added to target after compilation started
+3. **Optional dependency not guarded**: Builds without libarchive still tried to include its headers
 
 ## Solutions Applied
 
@@ -46,7 +46,31 @@ include_directories(
 
 **Why**: The include directories must be available globally before source files are compiled. Previously, they were only added to `target_include_directories` after the target was created, which was too late.
 
-### 3. Dependency Configuration (Already Present)
+### 3. Guarded Optional Headers
+**File**: `src/core/base/UtilStreams.cpp`
+
+Wrapped libarchive includes with a compile-time guard:
+```cpp
+#ifdef HAVE_LIBARCHIVE
+extern "C" {
+#include <libarchive/archive.h>
+#include <libarchive/archive_entry.h>
+}
+#endif
+```
+
+**File**: `CMakeLists.txt`
+
+Defined the guard when libarchive is available:
+```cmake
+if(ARCHIVE_FOUND)
+    add_definitions(-DHAVE_LIBARCHIVE)
+endif()
+```
+
+**Why**: Builds without libarchive should skip optional headers rather than fail to compile.
+
+### 4. Dependency Configuration (Already Present)
 **File**: `.github/workflows/build.yml`
 - `libarchive-dev` package is installed
 
@@ -59,7 +83,8 @@ The build should now succeed because:
 1. ✅ libarchive-dev is installed by GitHub Actions
 2. ✅ pkg-config finds libarchive and sets ARCHIVE_INCLUDE_DIRS
 3. ✅ Include directories are added globally before compilation
-4. ✅ Header files use proper system include syntax
+4. ✅ Optional headers are only included when libarchive is present
+5. ✅ Header files use proper system include syntax
 
 ## Additional Context
 - This issue only occurred during CI builds, not local builds where paths might differ
