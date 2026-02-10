@@ -93,24 +93,26 @@ file(GLOB BASE_WIN32_SOURCES "src/core/base/win32/*.cpp")
 list(FILTER BASE_WIN32_SOURCES EXCLUDE REGEX ".*/(FuncStubs|SusieArchive)\\.cpp$")
 
 # Source files - Environ
-file(GLOB ENVIRON_SOURCES "src/core/environ/*.cpp")
-list(FILTER ENVIRON_SOURCES EXCLUDE REGEX ".*/MainFormUnit\\.cpp$")
-# Exclude XP3ArchiveRepack.cpp as it requires external 7zip SDK
-list(FILTER ENVIRON_SOURCES EXCLUDE REGEX ".*/XP3ArchiveRepack\\.cpp$")
-
-file(GLOB ENVIRON_COCOS2D_SOURCES "src/core/environ/cocos2d/*.cpp")
-file(GLOB ENVIRON_LINUX_SOURCES "src/core/environ/linux/*.cpp")
-file(GLOB ENVIRON_UI_SOURCES 
-    "src/core/environ/ui/*.cpp"
-    "src/core/environ/ui/extension/*.cpp"
+# Most environ files depend on Cocos2d-x which is not included
+# Only include files that don't have Cocos2d-x dependencies
+set(ENVIRON_SOURCES
+    "src/core/environ/Application.cpp"
+    "src/core/environ/DetectCPU.cpp"
 )
-# Exclude UI files that depend on 7zip SDK (XP3Repack functionality)
-list(FILTER ENVIRON_UI_SOURCES EXCLUDE REGEX ".*/XP3RepackForm\\.cpp$")
-list(FILTER ENVIRON_UI_SOURCES EXCLUDE REGEX ".*/MainFileSelectorForm\\.cpp$")
+
+# Cocos2d-x sources - commented out as Cocos2d-x is not included in repository
+# When Cocos2d-x is installed, add these back and add find_package(Cocos2d-x)
+# file(GLOB ENVIRON_COCOS2D_SOURCES "src/core/environ/cocos2d/*.cpp")
+# file(GLOB ENVIRON_UI_SOURCES 
+#     "src/core/environ/ui/*.cpp"
+#     "src/core/environ/ui/extension/*.cpp"
+# )
+# And add: DumpSend.cpp, MainFormUnit.cpp, XP3ArchiveRepack.cpp (requires 7zip too)
+
+file(GLOB ENVIRON_LINUX_SOURCES "src/core/environ/linux/*.cpp")
+
 list(APPEND ENVIRON_SOURCES 
-    ${ENVIRON_COCOS2D_SOURCES}
     ${ENVIRON_LINUX_SOURCES}
-    ${ENVIRON_UI_SOURCES}
     src/core/environ/win32/SystemControl.cpp
 )
 
