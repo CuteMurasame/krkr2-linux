@@ -764,6 +764,7 @@ const char * tTVPUnpackArchiveImplLibArchive::_onPassphraseCallback(struct archi
 extern "C" {
 #include "7zip/C/7z.h"
 #include "7zip/C/7zFile.h"
+#include "7zip/C/7zAlloc.h"
 #include "7zip/C/7zCrc.h"
 }
 #include <fcntl.h>
@@ -771,8 +772,8 @@ extern "C" {
 #include "win32io.h"
 
 static ISzAlloc allocImp = {
-	[](void *p, size_t size) -> void * { return malloc(size); },
-	[](void *p, void *addr) { free(addr); }
+	SzAlloc,
+	SzFree
 };
 class tTVPUnpackArchiveImpl7Zip : public tTVPUnpackArchiveImplLibArchive {
 	int _stream;
