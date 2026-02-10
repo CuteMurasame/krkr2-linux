@@ -1,99 +1,112 @@
-# Build Status and Missing Dependencies
+# Build Status and Dependencies
 
-This document describes the current build status and what features are excluded due to missing dependencies.
+This document describes the current build status and dependency management.
 
 ## Current Build Status
 
-✅ **Core library builds successfully** - The krkr2_core static library compiles with system dependencies only.  
-✅ **Minimal executable builds** - A minimal `kirikiroid2` executable is produced.  
-⚠️ **Limited functionality** - Many features are disabled due to missing vendor libraries.
+✅ **Full 7zip support** - Complete 7zip SDK integrated (all archive functionality)  
+✅ **Core library builds** - The krkr2_core static library compiles successfully  
+✅ **Executable builds** - A working `kirikiroid2` executable is produced  
+✅ **Conditional Cocos2d-x** - Builds with or without Cocos2d-x automatically  
+⚠️ **UI requires Cocos2d-x** - Full UI functionality needs Cocos2d-x installation
 
-## Missing Vendor Dependencies
+## Integrated Dependencies
 
-The following external libraries are not included in this repository and must be obtained separately for full functionality:
+### 1. 7-Zip SDK ✅ INCLUDED
 
-### 1. Cocos2d-x (CRITICAL)
+**Status:** Fully integrated in repository  
+**Location:** `src/core/base/7zip/` (from p7zip project)  
+**Features enabled:**
+- Full 7z archive reading and writing
+- XP3 archive repacking with compression
+- All compression algorithms (LZMA, LZMA2, etc.)
 
-**Status:** Not included  
-**Impact:** UI, rendering, and main application loop are disabled  
-**Files excluded:**
-- `src/core/environ/cocos2d/*.cpp` (13 files)
-- `src/core/environ/ui/*.cpp` (15+ files)
-- `src/linux_main.cpp` (using minimal stub instead)
+**Files now working:**
+- `src/core/base/7zArchive.cpp` - 7z archive support
+- `src/core/environ/XP3ArchiveRepack.cpp` - XP3 repacking with 7z compression
+- Complete SDK: C sources (7zip/C/*) and C++ sources (7zip/CPP/*)
 
-**To enable:**
-1. Install Cocos2d-x v3.17.2 or compatible version
-2. Update CMakeLists.txt to find Cocos2d-x headers and libraries
-3. Uncomment the cocos2d and UI source sections in CMakeLists.txt
-4. Replace `src/linux_main.cpp` with the full version from git history
+**No additional installation needed** - works out of the box!
 
-**Installation:**
+## Optional Dependencies
+
+### 2. Cocos2d-x (UI Framework)
+
+**Status:** Optional - build works with or without it  
+**Impact:** UI and rendering features require Cocos2d-x  
+**Build behavior:**
+- **Without Cocos2d-x:** Builds core engine library successfully, minimal executable
+- **With Cocos2d-x:** Full featured build with UI, rendering, main application loop
+
+**Files enabled when Cocos2d-x available:**
+- `src/core/environ/cocos2d/*.cpp` (13 files) - Cocos2d-x integration
+- `src/core/environ/ui/*.cpp` (15+ files) - UI components
+- `src/linux_main.cpp` - Full application mode with SDL and Cocos2d-x
+
+**To enable Cocos2d-x features:**
+
+The build system automatically detects Cocos2d-x in these locations:
+- `/usr/include/cocos2d` (system install)
+- `/usr/local/include/cocos2d` (local install)
+- `vendor/cocos2d-x/cocos` (repository vendor directory)
+- `../cocos2d-x/cocos` (sibling directory)
+
+Install Cocos2d-x to any of these locations:
 ```bash
-# Download Cocos2d-x
+# Option 1: Clone to vendor directory (recommended)
+mkdir -p vendor
 git clone https://github.com/cocos2d/cocos2d-x.git vendor/cocos2d-x
 cd vendor/cocos2d-x
-git checkout v3.17.2
+git checkout cocos2d-x-4.0  # or compatible version
 
-# Then update CMakeLists.txt to add:
-# find_package(Cocos2d-x REQUIRED)
-# or manually add include directories and link libraries
+# Option 2: Clone as sibling directory
+cd ..
+git clone https://github.com/cocos2d/cocos2d-x.git
 ```
 
-### 2. 7-Zip SDK
+Then rebuild - CMake will automatically detect and use it!
 
-**Status:** Not included  
-**Impact:** 7z archive support disabled, XP3 archive repacking disabled  
-**Files excluded:**
-- `src/core/base/7zArchive.cpp`
-- `src/core/environ/XP3ArchiveRepack.cpp`
-- `src/core/environ/ui/XP3RepackForm.cpp`
-- `src/core/environ/ui/MainFileSelectorForm.cpp`
+### 3. System Dependencies ✅ REQUIRED
 
-**To enable:**
-1. Download 7-Zip SDK from https://www.7-zip.org/sdk.html
-2. Extract to `src/core/base/7zip/` (should contain C/ and CPP/ directories)
-3. Uncomment the 7zip source sections in CMakeLists.txt
+These must be installed via package manager - see BUILD_LINUX.md for details.
 
-**Required structure:**
-```
-src/core/base/7zip/
-├── C/
-│   ├── 7z.h
-│   ├── 7zFile.h
-│   ├── 7zCrc.h
-│   └── *.c files
-└── CPP/
-    └── 7zip/
-        └── ... (archive and compression modules)
-```
+**Core dependencies** (required):
+- SDL2, OpenGL, FreeType, zlib, libpng, libjpeg
+
+**Optional dependencies** (recommended):
+- FFmpeg (video playback)
+- OpenAL (3D audio)
+- Opus, Vorbis (audio codecs)
+- Cairo, Pixman (graphics)
+- LibArchive, Expat (utilities)
 
 ## Included Components
 
-The following components are currently included and build successfully:
+All components build successfully:
 
 ### Core Components ✅
-- Base utilities (excluding 7zip)
+- Base utilities (with 7zip support!)
 - Binary stream handling
 - Character set support
 - Event system
 - Plugin interface
 - Script manager
-- Storage interface
+- Storage interface (XP3, ZIP, TAR, 7z archives)
 - System initialization
 - Text streams
-- XP3 and TAR archive reading (basic)
-- ZIP archive support
 
 ### Environment ✅
-- Application framework (core only)
+- Application framework
 - CPU detection
-- Linux platform layer (if implemented)
+- Linux platform layer
+- **Cocos2d-x integration** (when available)
+- **UI components** (when Cocos2d-x available)
 
 ### Extensions ✅
 - Core extensions
 
 ### Movie/Video ✅
-- Video playback modules (if dependencies met)
+- Video playback modules
 
 ### Messaging ✅
 - Messaging system
@@ -110,6 +123,7 @@ The following components are currently included and build successfully:
 - Utility functions
 - Encoding support
 - Minizip library
+- **7zip compression** ✅
 
 ### Visual ✅
 - Graphics core
@@ -120,7 +134,7 @@ The following components are currently included and build successfully:
 
 ## Build Options
 
-### Current (Minimal) Build
+### Default Build (without Cocos2d-x)
 ```bash
 ./build.sh
 # or
@@ -129,58 +143,64 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j$(nproc)
 ```
 
-Produces: Minimal executable that shows library builds successfully
+**Produces:** Core engine library + minimal executable  
+**Features:** All archive support (including 7z), scripting, utilities  
+**Missing:** UI, rendering, full application
 
-### Future (Full) Build
-After installing Cocos2d-x and 7-Zip SDK:
+### Full Build (with Cocos2d-x)
 ```bash
-# Update CMakeLists.txt to uncomment excluded sections
-# Then build normally
+# After installing Cocos2d-x to vendor/ or system
 ./build.sh
 ```
 
-Produces: Fully functional Kirikiroid2 application
+**Produces:** Fully functional Kirikiroid2 application  
+**Features:** Everything including UI, rendering, full game engine
 
-## Dependencies Status
+## Dependencies Summary
 
-| Dependency | Required | Status | Notes |
-|------------|----------|--------|-------|
-| SDL2 | ✅ Yes | ✅ System | Window/input handling |
-| OpenGL | ✅ Yes | ✅ System | Graphics rendering |
-| FreeType | ✅ Yes | ✅ System | Font rendering |
-| zlib | ✅ Yes | ✅ System | Compression |
-| libpng | ✅ Yes | ✅ System | PNG images |
-| libjpeg | ✅ Yes | ✅ System | JPEG images |
-| Cocos2d-x | ✅ Yes | ❌ Missing | UI framework |
-| 7-Zip SDK | ⚠️ Optional | ❌ Missing | 7z archive support |
-| FFmpeg | ⚠️ Optional | ✅ System | Video playback |
-| OpenAL | ⚠️ Optional | ✅ System | 3D audio |
-| Opus | ⚠️ Optional | ✅ System | Audio codec |
-| Vorbis | ⚠️ Optional | ✅ System | Audio codec |
-
-## Next Steps
-
-1. **For Developers:**
-   - Integrate Cocos2d-x properly (highest priority)
-   - Add 7-Zip SDK for archive support
-   - Test on actual visual novel games
-   - Implement missing Linux platform features
-
-2. **For Users:**
-   - Current build demonstrates successful compilation
-   - Wait for Cocos2d-x integration for usable application
-   - Or manually integrate dependencies following this guide
-
-## Related Documentation
-
-- [BUILD_LINUX.md](BUILD_LINUX.md) - Build instructions
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Development guide with vendor library info
-- [CMakeLists.txt](CMakeLists.txt) - Build configuration with commented sections
+| Dependency | Status | Required | Location |
+|------------|--------|----------|----------|
+| **7-Zip SDK** | ✅ Included | Optional | src/core/base/7zip/ |
+| **SDL2** | System pkg | ✅ Yes | libsdl2-dev |
+| **OpenGL** | System pkg | ✅ Yes | libgl1-mesa-dev |
+| **FreeType** | System pkg | ✅ Yes | libfreetype6-dev |
+| **zlib** | System pkg | ✅ Yes | zlib1g-dev |
+| **libpng** | System pkg | ✅ Yes | libpng-dev |
+| **libjpeg** | System pkg | ✅ Yes | libjpeg-dev |
+| **Cocos2d-x** | Optional | ⚠️ UI | vendor/cocos2d-x/ |
+| **FFmpeg** | System pkg | Optional | libavcodec-dev, etc. |
+| **OpenAL** | System pkg | Optional | libopenal-dev |
+| **Opus** | System pkg | Optional | libopus-dev |
+| **Vorbis** | System pkg | Optional | libvorbis-dev |
 
 ## CI/CD
 
-GitHub Actions workflow automatically builds this minimal configuration on:
-- Ubuntu 20.04
-- Ubuntu 22.04
+GitHub Actions workflow automatically builds on:
+- Ubuntu 20.04 (Release + Debug)
+- Ubuntu 22.04 (Release + Debug)
 
-Both Release and Debug builds are tested. Build artifacts are available for download from workflow runs.
+Current CI builds succeed with:
+- ✅ Full 7zip support
+- ✅ Core engine compilation
+- ⚠️ Without Cocos2d-x (minimal mode)
+
+When Cocos2d-x is added to CI, it will build the full application.
+
+## Next Steps
+
+**For immediate use:**
+- ✅ Build works now - core engine functional
+- ✅ All archive formats supported (XP3, ZIP, TAR, 7z)
+- ✅ Scripting engine ready
+
+**For full functionality:**
+1. Install or build Cocos2d-x
+2. Place in vendor/cocos2d-x/ or system location
+3. Rebuild - features activate automatically!
+
+## Related Documentation
+
+- [BUILD_LINUX.md](BUILD_LINUX.md) - Build instructions and dependencies
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Development guide
+- [CMakeLists.txt](CMakeLists.txt) - Build configuration with auto-detection
+- [readme.md](readme.md) - Project overview
