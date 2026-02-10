@@ -9,26 +9,35 @@ extern "C" {
 }
 #include "StorageImpl.h"
 
-static ISzAlloc allocImp = {
-	[](void *p, size_t size) -> void *{ return malloc(size); },
-	[](void *p, void *addr) { free(addr); }
-};
+// Allocation functions for 7zip SDK
+static void *SzAlloc(ISzAllocPtr p, size_t size) { return malloc(size); }
+static void SzFree(ISzAllocPtr p, void *address) { free(address); }
+
+static ISzAlloc allocImp = { SzAlloc, SzFree };
 
 class SevenZipStreamWrap {
 public:
 	CSzArEx db;
 	tTJSBinaryStream *_stream;
-	CLookToRead lookStream;
+	CLookToRead2 lookStream;
 	struct CSeekInStream : public ISeekInStream {
 		SevenZipStreamWrap *Host;
+		
+		static SRes Read_Func(const ISeekInStream *p, void *buf, size_t *size) {
+			return ((CSeekInStream*)p)->Host->StreamRead(buf, size);
+		}
+		
+		static SRes Seek_Func(const ISeekInStream *p, Int64 *pos, ESzSeek origin) {
+			return ((CSeekInStream*)p)->Host->StreamSeek(pos, origin);
+		}
 	} archiveStream;
 
 public:
 	SevenZipStreamWrap(tTJSBinaryStream * st) : _stream(st) {
 		archiveStream.Host = this;
-		archiveStream.Read = [](void *p, void *buf, size_t *size)->SRes {return ((CSeekInStream*)p)->Host->StreamRead(buf, size); };
-		archiveStream.Seek = [](void *p, Int64 *pos, ESzSeek origin)->SRes {return ((CSeekInStream*)p)->Host->StreamSeek(pos, origin); };
-		LookToRead_CreateVTable(&lookStream, false);
+		archiveStream.Read = CSeekInStream::Read_Func;
+		archiveStream.Seek = CSeekInStream::Seek_Func;
+		LookToRead2_CreateVTable(&lookStream, False);
 		lookStream.realStream = &archiveStream;
 		SzArEx_Init(&db);
 		if (!g_CrcTable[1]) CrcGenerateTable();
@@ -97,7 +106,7 @@ public:
 		Byte *outBuffer = nullptr;
 		size_t outBufferSize;
 		size_t offset, outSizeProcessed;
-		SRes res = SzArEx_Extract(&db, &lookStream.s, fileIndex, &blockIndex, &outBuffer, &outBufferSize,
+		SRes res = SzArEx_Extract(&db, &lookStream.vt, fileIndex, &blockIndex, &outBuffer, &outBufferSize,
 			&offset, &outSizeProcessed, &allocImp, &allocImp);
 		tTVPMemoryStream *mem;
 		if (offset == 0 && fileSize <= outBufferSize) {
@@ -112,12 +121,12 @@ public:
 	}
 
 	bool Open(bool normalizeFileName) {
-		SRes res = SzArEx_Open(&db, &lookStream.s, &allocImp, &allocImp);
+		SRes res = SzArEx_Open(&db, &lookStream.vt, &allocImp, &allocImp);
 		if (res != SZ_OK) {
 			_stream = nullptr;
 			return false;
 		}
-		for (int i = 0; i < db.NumFiles; i++) {
+		for (UInt32 i = 0; i < db.NumFiles; i++) {
 			size_t offset = 0;
 			size_t outSizeProcessed = 0;
 			bool isDir = SzArEx_IsDir(&db, i);
