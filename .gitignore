@@ -1,0 +1,62 @@
+# Build directories
+build/
+cmake-build-*/
+.cmake/
+
+# Compiled Object files
+*.o
+*.obj
+*.ko
+*.slo
+*.lo
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+*.la
+*.lai
+
+# Executables
+kirikiroid2
+*.exe
+*.out
+*.app
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+Makefile
+
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Dependencies that might be downloaded
+vendor/
+libs/
+
+# Local configuration
+*.local
+.env
+
+# Temporary files
+tmp/
+temp/
+*.tmp
