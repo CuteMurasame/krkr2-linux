@@ -24,7 +24,6 @@ add_definitions(-D_7ZIP_ST)
 
 # Find required packages
 find_package(PkgConfig REQUIRED)
-include(FindPackageHandleStandardArgs)
 
 # Core dependencies
 pkg_check_modules(SDL2 REQUIRED sdl2)
@@ -43,10 +42,12 @@ pkg_check_modules(CAIRO cairo)
 pkg_check_modules(PIXMAN pixman-1)
 pkg_check_modules(EXPAT expat)
 pkg_check_modules(ARCHIVE libarchive)
-set(UNRAR_FIND_QUIETLY TRUE)
 find_path(UNRAR_INCLUDE_DIR unrar/raros.hpp)
 find_library(UNRAR_LIBRARY NAMES unrar)
-find_package_handle_standard_args(UNRAR REQUIRED_VARS UNRAR_LIBRARY UNRAR_INCLUDE_DIR)
+set(UNRAR_FOUND FALSE)
+if(UNRAR_INCLUDE_DIR AND UNRAR_LIBRARY)
+    set(UNRAR_FOUND TRUE)
+endif()
 
 # Include directories
 include_directories(
