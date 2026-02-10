@@ -73,13 +73,20 @@ include_directories(
 # Source files - Base
 file(GLOB BASE_SOURCES 
     "src/core/base/*.cpp"
-    "src/core/base/7zip/*.c"
-    "src/core/base/7zip/C/*.c"
 )
-file(GLOB_RECURSE BASE_7ZIP_CPP_SOURCES 
-    "src/core/base/7zip/CPP/*.cpp"
-)
-list(APPEND BASE_SOURCES ${BASE_7ZIP_CPP_SOURCES})
+# Exclude 7zArchive.cpp as it requires external 7zip SDK not included in repo
+list(FILTER BASE_SOURCES EXCLUDE REGEX ".*/7zArchive\\.cpp$")
+
+# 7zip SDK sources - commented out as not included in repository
+# When 7zip SDK is added to src/core/base/7zip/, uncomment these lines:
+# file(GLOB BASE_7ZIP_C_SOURCES 
+#     "src/core/base/7zip/*.c"
+#     "src/core/base/7zip/C/*.c"
+# )
+# file(GLOB_RECURSE BASE_7ZIP_CPP_SOURCES 
+#     "src/core/base/7zip/CPP/*.cpp"
+# )
+# list(APPEND BASE_SOURCES ${BASE_7ZIP_C_SOURCES} ${BASE_7ZIP_CPP_SOURCES})
 
 # Source files - Base win32 (some compatibility code)
 file(GLOB BASE_WIN32_SOURCES "src/core/base/win32/*.cpp")
@@ -88,12 +95,18 @@ list(FILTER BASE_WIN32_SOURCES EXCLUDE REGEX ".*/(FuncStubs|SusieArchive)\\.cpp$
 # Source files - Environ
 file(GLOB ENVIRON_SOURCES "src/core/environ/*.cpp")
 list(FILTER ENVIRON_SOURCES EXCLUDE REGEX ".*/MainFormUnit\\.cpp$")
+# Exclude XP3ArchiveRepack.cpp as it requires external 7zip SDK
+list(FILTER ENVIRON_SOURCES EXCLUDE REGEX ".*/XP3ArchiveRepack\\.cpp$")
+
 file(GLOB ENVIRON_COCOS2D_SOURCES "src/core/environ/cocos2d/*.cpp")
 file(GLOB ENVIRON_LINUX_SOURCES "src/core/environ/linux/*.cpp")
 file(GLOB ENVIRON_UI_SOURCES 
     "src/core/environ/ui/*.cpp"
     "src/core/environ/ui/extension/*.cpp"
 )
+# Exclude UI files that depend on 7zip SDK (XP3Repack functionality)
+list(FILTER ENVIRON_UI_SOURCES EXCLUDE REGEX ".*/XP3RepackForm\\.cpp$")
+list(FILTER ENVIRON_UI_SOURCES EXCLUDE REGEX ".*/MainFileSelectorForm\\.cpp$")
 list(APPEND ENVIRON_SOURCES 
     ${ENVIRON_COCOS2D_SOURCES}
     ${ENVIRON_LINUX_SOURCES}
