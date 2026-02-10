@@ -68,6 +68,7 @@ include_directories(
     ${SDL2_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
+    ${ARCHIVE_INCLUDE_DIRS}
 )
 
 # Source files - Base
