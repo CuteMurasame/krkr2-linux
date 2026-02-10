@@ -24,6 +24,7 @@ add_definitions(-D_7ZIP_ST)
 
 # Find required packages
 find_package(PkgConfig REQUIRED)
+include(FindPackageHandleStandardArgs)
 
 # Core dependencies
 pkg_check_modules(SDL2 REQUIRED sdl2)
@@ -44,7 +45,6 @@ pkg_check_modules(EXPAT expat)
 pkg_check_modules(ARCHIVE libarchive)
 find_path(UNRAR_INCLUDE_DIR unrar/raros.hpp)
 find_library(UNRAR_LIBRARY NAMES unrar)
-include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(UNRAR DEFAULT_MSG UNRAR_LIBRARY UNRAR_INCLUDE_DIR)
 
 # Include directories
