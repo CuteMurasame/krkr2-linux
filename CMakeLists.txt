@@ -256,7 +256,7 @@ endif()
 if(ARCHIVE_FOUND)
     target_include_directories(krkr2_core PUBLIC ${ARCHIVE_INCLUDE_DIRS})
     target_link_libraries(krkr2_core ${ARCHIVE_LIBRARIES})
-    add_definitions(-DHAVE_LIBARCHIVE)
+    target_compile_definitions(krkr2_core PRIVATE HAVE_LIBARCHIVE)
 endif()
 
 # Main executable

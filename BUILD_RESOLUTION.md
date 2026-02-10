@@ -64,7 +64,7 @@ extern "C" {
 Defined the guard when libarchive is available:
 ```cmake
 if(ARCHIVE_FOUND)
-    add_definitions(-DHAVE_LIBARCHIVE)
+    target_compile_definitions(krkr2_core PRIVATE HAVE_LIBARCHIVE)
 endif()
 ```
 
