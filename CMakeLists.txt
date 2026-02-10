@@ -24,6 +24,7 @@ add_definitions(-D_7ZIP_ST)
 
 # Find required packages
 find_package(PkgConfig REQUIRED)
+include(FindPackageHandleStandardArgs)
 
 # Core dependencies
 pkg_check_modules(SDL2 REQUIRED sdl2)
@@ -42,6 +43,9 @@ pkg_check_modules(CAIRO cairo)
 pkg_check_modules(PIXMAN pixman-1)
 pkg_check_modules(EXPAT expat)
 pkg_check_modules(ARCHIVE libarchive)
+find_path(UNRAR_INCLUDE_DIR unrar/raros.hpp)
+find_library(UNRAR_LIBRARY NAMES unrar)
+find_package_handle_standard_args(UNRAR DEFAULT_MSG UNRAR_LIBRARY UNRAR_INCLUDE_DIR)
 
 # Include directories
 include_directories(
@@ -256,6 +260,13 @@ endif()
 if(ARCHIVE_FOUND)
     target_include_directories(krkr2_core PUBLIC ${ARCHIVE_INCLUDE_DIRS})
     target_link_libraries(krkr2_core ${ARCHIVE_LIBRARIES})
+    target_compile_definitions(krkr2_core PRIVATE HAVE_LIBARCHIVE)
+endif()
+
+if(UNRAR_FOUND)
+    target_include_directories(krkr2_core PUBLIC ${UNRAR_INCLUDE_DIR})
+    target_link_libraries(krkr2_core ${UNRAR_LIBRARY})
+    target_compile_definitions(krkr2_core PRIVATE HAVE_UNRAR)
 endif()
 
 # Main executable
@@ -283,4 +294,5 @@ message(STATUS "Cairo: ${CAIRO_FOUND}")
 message(STATUS "Pixman: ${PIXMAN_FOUND}")
 message(STATUS "Expat: ${EXPAT_FOUND}")
 message(STATUS "LibArchive: ${ARCHIVE_FOUND}")
+message(STATUS "UnRAR: ${UNRAR_FOUND}")
 message(STATUS "==================================")
