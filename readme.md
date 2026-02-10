@@ -3,6 +3,22 @@ Kirikiroid2 - A cross-platform port of Kirikiri2/KirikiriZ
 
 Based on most code from [Kirikiri2](http://kikyou.info/tvp/) and [KirikiriZ](https://github.com/krkrz/krkrz)
 
+## Platforms
+
+- **Android**: Original target platform
+- **Linux**: See [BUILD_LINUX.md](BUILD_LINUX.md) for build instructions
+
+## Building for Linux
+
+Quick start:
+```bash
+./build.sh
+```
+
+For detailed instructions, dependencies, and troubleshooting, see [BUILD_LINUX.md](BUILD_LINUX.md).
+
+## Credits
+
 Video playback module modified from [kodi](https://github.com/xbmc/xbmc)
 
 Some string code from [glibc](https://www.gnu.org/s/libc) and [Apple Libc](https://opensource.apple.com/source/Libc).
