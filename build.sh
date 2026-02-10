@@ -126,20 +126,30 @@ install_dependencies() {
             sudo apt-get install -y \
                 build-essential cmake git pkg-config \
                 libsdl2-dev libgl1-mesa-dev libfreetype6-dev \
-                zlib1g-dev libpng-dev libjpeg-dev
+                zlib1g-dev libpng-dev libjpeg-dev \
+                libavcodec-dev libavformat-dev libavutil-dev \
+                libswscale-dev libswresample-dev libopenal-dev \
+                libopus-dev libopusfile-dev libvorbis-dev \
+                libcairo2-dev libpixman-1-dev libexpat1-dev \
+                libarchive-dev
             ;;
         fedora|rhel|centos)
             print_info "Installing dependencies for Fedora/RHEL/CentOS..."
             sudo dnf install -y \
                 gcc gcc-c++ cmake git pkgconfig \
                 SDL2-devel mesa-libGL-devel freetype-devel \
-                zlib-devel libpng-devel libjpeg-turbo-devel
+                zlib-devel libpng-devel libjpeg-turbo-devel \
+                ffmpeg-devel openal-soft-devel opus-devel \
+                opusfile-devel libvorbis-devel cairo-devel \
+                pixman-devel expat-devel libarchive-devel
             ;;
         arch|manjaro)
             print_info "Installing dependencies for Arch Linux..."
             sudo pacman -S --needed \
                 base-devel cmake git \
-                sdl2 mesa freetype2 zlib libpng libjpeg-turbo
+                sdl2 mesa freetype2 zlib libpng libjpeg-turbo \
+                ffmpeg openal opus opusfile libvorbis \
+                cairo pixman expat libarchive
             ;;
         *)
             print_error "Unknown distribution. Please install dependencies manually."
