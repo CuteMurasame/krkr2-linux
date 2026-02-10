@@ -45,7 +45,7 @@ pkg_check_modules(EXPAT expat)
 pkg_check_modules(ARCHIVE libarchive)
 find_path(UNRAR_INCLUDE_DIR unrar/raros.hpp)
 find_library(UNRAR_LIBRARY NAMES unrar)
-find_package_handle_standard_args(UNRAR REQUIRED_VARS UNRAR_LIBRARY UNRAR_INCLUDE_DIR)
+find_package_handle_standard_args(UNRAR DEFAULT_MSG UNRAR_LIBRARY UNRAR_INCLUDE_DIR)
 
 # Include directories
 include_directories(

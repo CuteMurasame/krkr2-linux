@@ -999,7 +999,7 @@ int tTVPUnpackArchive::Prepare(const std::string &path, const std::string &_outp
 #else
 		static std::once_flag unrarWarningOnce;
 		std::call_once(unrarWarningOnce, []() {
-			TVPAddLog(TJS_W("Warning: UnRAR support not available; falling back to LibArchive for RAR files."));
+			TVPAddLog(TJS_W("Warning: UnRAR support not available. Falling back to LibArchive for RAR files."));
 		});
 		_impl = new tTVPUnpackArchiveImplLibArchive();
 #endif
