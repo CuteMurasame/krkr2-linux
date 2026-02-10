@@ -43,9 +43,9 @@ pkg_check_modules(CAIRO cairo)
 pkg_check_modules(PIXMAN pixman-1)
 pkg_check_modules(EXPAT expat)
 pkg_check_modules(ARCHIVE libarchive)
+set(UNRAR_FIND_QUIETLY TRUE)
 find_path(UNRAR_INCLUDE_DIR unrar/raros.hpp)
 find_library(UNRAR_LIBRARY NAMES unrar)
-set(UNRAR_FIND_QUIETLY TRUE)
 find_package_handle_standard_args(UNRAR REQUIRED_VARS UNRAR_LIBRARY UNRAR_INCLUDE_DIR)
 
 # Include directories
