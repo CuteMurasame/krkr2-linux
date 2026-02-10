@@ -835,6 +835,7 @@ public:
 	}
 };
 
+#ifdef HAVE_UNRAR
 #include "unrar/raros.hpp"
 #include "unrar/dll.hpp"
 class tTVPUnpackArchiveImplUnRAR : public iTVPUnpackArchiveImpl {
@@ -980,6 +981,7 @@ public:
 		_callbacks->FuncOnEnded();
 	}
 };
+#endif
 
 int tTVPUnpackArchive::Prepare(const std::string &path, const std::string &_outpath, tjs_uint64 *totalSize) {
 	FILE *FpIn = fopen(path.c_str(), "rb");
@@ -992,7 +994,11 @@ int tTVPUnpackArchive::Prepare(const std::string &path, const std::string &_outp
 	OutPath = _outpath + "/";
 	fclose(FpIn);
 	if (!memcmp(signature, "Rar!", 4)) {
+#ifdef HAVE_UNRAR
 		_impl = new tTVPUnpackArchiveImplUnRAR();
+#else
+		_impl = new tTVPUnpackArchiveImplLibArchive();
+#endif
 	} else if (!memcmp(signature, "PK", 2)) {
 		_impl = new tTVPUnpackArchiveImplLibArchive();
 	} else if (!memcmp(signature, "7z", 2)) {

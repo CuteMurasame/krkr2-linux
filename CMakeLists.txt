@@ -42,6 +42,12 @@ pkg_check_modules(CAIRO cairo)
 pkg_check_modules(PIXMAN pixman-1)
 pkg_check_modules(EXPAT expat)
 pkg_check_modules(ARCHIVE libarchive)
+find_path(UNRAR_INCLUDE_DIR unrar/raros.hpp)
+find_library(UNRAR_LIBRARY NAMES unrar)
+set(UNRAR_FOUND FALSE)
+if(UNRAR_INCLUDE_DIR AND UNRAR_LIBRARY)
+    set(UNRAR_FOUND TRUE)
+endif()
 
 # Include directories
 include_directories(
@@ -259,6 +265,12 @@ if(ARCHIVE_FOUND)
     target_compile_definitions(krkr2_core PRIVATE HAVE_LIBARCHIVE)
 endif()
 
+if(UNRAR_FOUND)
+    target_include_directories(krkr2_core PUBLIC ${UNRAR_INCLUDE_DIR})
+    target_link_libraries(krkr2_core ${UNRAR_LIBRARY})
+    target_compile_definitions(krkr2_core PRIVATE HAVE_UNRAR)
+endif()
+
 # Main executable
 add_executable(kirikiroid2 src/linux_main.cpp)
 target_link_libraries(kirikiroid2 krkr2_core)
@@ -284,4 +296,5 @@ message(STATUS "Cairo: ${CAIRO_FOUND}")
 message(STATUS "Pixman: ${PIXMAN_FOUND}")
 message(STATUS "Expat: ${EXPAT_FOUND}")
 message(STATUS "LibArchive: ${ARCHIVE_FOUND}")
+message(STATUS "UnRAR: ${UNRAR_FOUND}")
 message(STATUS "==================================")

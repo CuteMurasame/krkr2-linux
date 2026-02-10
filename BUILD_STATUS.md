@@ -79,6 +79,7 @@ These must be installed via package manager - see BUILD_LINUX.md for details.
 - Opus, Vorbis (audio codecs)
 - Cairo, Pixman (graphics)
 - LibArchive, Expat (utilities)
+- UnRAR (RAR extraction)
 
 ## Included Components
 
@@ -172,6 +173,7 @@ make -j$(nproc)
 | **OpenAL** | System pkg | Optional | libopenal-dev |
 | **Opus** | System pkg | Optional | libopus-dev |
 | **Vorbis** | System pkg | Optional | libvorbis-dev |
+| **UnRAR** | System pkg | Optional | libunrar-dev |
 
 ## CI/CD
 
