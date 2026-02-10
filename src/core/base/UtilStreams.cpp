@@ -997,6 +997,7 @@ int tTVPUnpackArchive::Prepare(const std::string &path, const std::string &_outp
 #ifdef HAVE_UNRAR
 		_impl = new tTVPUnpackArchiveImplUnRAR();
 #else
+		TVPAddLog(TJS_W("Warning: UnRAR support not available; falling back to LibArchive for RAR files."));
 		_impl = new tTVPUnpackArchiveImplLibArchive();
 #endif
 	} else if (!memcmp(signature, "PK", 2)) {
