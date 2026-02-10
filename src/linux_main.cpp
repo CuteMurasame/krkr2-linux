@@ -1,12 +1,16 @@
 /**
  * Linux main entry point for Kirikiroid2
  * 
- * This file provides the main() function for the Linux build,
- * initializing the application and starting the Cocos2d-x engine.
+ * This file provides the main() function for the Linux build.
+ * It can build with or without Cocos2d-x depending on availability.
  */
 
-#include <SDL2/SDL.h>
 #include <iostream>
+
+// Check if Cocos2d-x support is enabled at build time
+#ifdef HAVE_COCOS2DX
+
+#include <SDL2/SDL.h>
 #include <thread>
 #include "cocos2d/AppDelegate.h"
 #include "Application.h"
@@ -14,6 +18,8 @@
 // External symbols
 extern "C" void SDL_SetMainReady(void);
 extern std::thread::id TVPMainThreadID;
+
+#endif // HAVE_COCOS2DX
 
 // Platform detection - ensure we're on Linux
 #ifndef __linux__
@@ -25,6 +31,10 @@ int main(int argc, char* argv[]) {
     std::cout << "Kirikiroid2 for Linux" << std::endl;
     std::cout << "Based on Kirikiri2/KirikiriZ" << std::endl;
     std::cout << "========================" << std::endl;
+    
+#ifdef HAVE_COCOS2DX
+    // Full version with Cocos2d-x
+    std::cout << "Running with Cocos2d-x support" << std::endl;
     
     // Parse command line arguments if needed
     for (int i = 1; i < argc; i++) {
@@ -56,4 +66,23 @@ int main(int argc, char* argv[]) {
     SDL_Quit();
     
     return ret;
+#else
+    // Minimal version without Cocos2d-x
+    std::cout << "Built without Cocos2d-x - core library only" << std::endl;
+    std::cout << std::endl;
+    std::cout << "This build demonstrates successful compilation of the core engine." << std::endl;
+    std::cout << "For full functionality, install Cocos2d-x and rebuild." << std::endl;
+    std::cout << std::endl;
+    std::cout << "See BUILD_LINUX.md and BUILD_STATUS.md for more information." << std::endl;
+    
+    // Parse command line arguments if provided
+    if (argc > 1) {
+        std::cout << std::endl << "Command line arguments:" << std::endl;
+        for (int i = 1; i < argc; i++) {
+            std::cout << "  Arg[" << i << "]: " << argv[i] << std::endl;
+        }
+    }
+    
+    return 0;
+#endif
 }

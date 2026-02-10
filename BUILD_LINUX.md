@@ -248,12 +248,34 @@ make -j$(nproc)
 
 ## Current Limitations
 
-This is an initial Linux port. Some features may not be fully functional:
+This is an initial Linux port with a minimal build configuration. The current build:
 
-1. **Vendor Dependencies**: Many vendor libraries (listed in Android.mk) are not yet integrated
-2. **Cocos2d-x Integration**: Full integration with Cocos2d-x needs to be completed
-3. **Platform-Specific Code**: Some Windows-specific code may need Linux alternatives
-4. **Testing**: Comprehensive testing on Linux is needed
+✅ **Successfully compiles** the core library with system dependencies only  
+✅ **Produces an executable** demonstrating the build works  
+⚠️ **Limited functionality** - Many features are disabled due to missing vendor libraries
+
+### Missing Dependencies
+
+The following external libraries are **not included** and must be obtained separately:
+
+1. **Cocos2d-x** (CRITICAL) - Required for UI, rendering, and main application loop
+   - Currently excluded: `environ/cocos2d/*`, `environ/ui/*`, full `linux_main.cpp`
+   - See [BUILD_STATUS.md](BUILD_STATUS.md) for integration instructions
+
+2. **7-Zip SDK** (Optional) - Required for 7z archive support
+   - Currently excluded: `7zArchive.cpp`, `XP3ArchiveRepack.cpp`
+   - See [BUILD_STATUS.md](BUILD_STATUS.md) for integration instructions
+
+For complete status and instructions to enable these features, see **[BUILD_STATUS.md](BUILD_STATUS.md)**.
+
+### What Works
+
+- Core engine compilation
+- System dependency integration (SDL2, OpenGL, FreeType, etc.)
+- Continuous Integration via GitHub Actions
+- Basic archive support (XP3, ZIP, TAR)
+- TJS2 scripting engine
+- Most core utilities
 
 ## Contributing
 

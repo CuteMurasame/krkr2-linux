@@ -1,0 +1,81 @@
+name: Build Kirikiroid2 Linux
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }} (${{ matrix.build_type }})
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
+        build_type: [Release, Debug]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            git \
+            libsdl2-dev \
+            libgl1-mesa-dev \
+            libfreetype6-dev \
+            zlib1g-dev \
+            libpng-dev \
+            libjpeg-dev \
+            pkg-config \
+            libavcodec-dev \
+            libavformat-dev \
+            libavutil-dev \
+            libswscale-dev \
+            libswresample-dev \
+            libopenal-dev \
+            libopus-dev \
+            libopusfile-dev \
+            libvorbis-dev \
+            libcairo2-dev \
+            libpixman-1-dev \
+            libexpat1-dev \
+            libarchive-dev
+
+      - name: Create build directory
+        run: mkdir -p build
+
+      - name: Configure CMake
+        run: |
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+
+      - name: Build
+        run: |
+          cd build
+          make -j$(nproc)
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kirikiroid2-${{ matrix.os }}-${{ matrix.build_type }}
+          path: build/kirikiroid2
+          if-no-files-found: error
+
+      - name: Display build information
+        run: |
+          echo "Build completed successfully!"
+          echo "OS: ${{ matrix.os }}"
+          echo "Build Type: ${{ matrix.build_type }}"
+          ls -lh build/kirikiroid2
+          file build/kirikiroid2

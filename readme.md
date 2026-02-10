@@ -1,6 +1,8 @@
 Kirikiroid2 - A cross-platform port of Kirikiri2/KirikiriZ
 ==========================================================
 
+[![Build Status](https://github.com/CuteMurasame/krkr2-linux/actions/workflows/build.yml/badge.svg)](https://github.com/CuteMurasame/krkr2-linux/actions/workflows/build.yml)
+
 Based on most code from [Kirikiri2](http://kikyou.info/tvp/) and [KirikiriZ](https://github.com/krkrz/krkrz)
 
 ## Platforms
